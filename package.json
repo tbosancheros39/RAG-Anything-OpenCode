@@ -3,6 +3,7 @@
   "version": "0.14.0",
   "description": "Telegram bot client for OpenCode to run and monitor coding tasks from chat.",
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
@@ -16,6 +17,8 @@
     "dist",
     "README.md",
     "LICENSE.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
     ".env.example"
   ],
   "engines": {
@@ -25,6 +28,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "npm run build && npm start",
+    "prepublishOnly": "npm run build",
     "release:prepare": "node scripts/release-prepare.mjs",
     "release:rc": "node scripts/release-prepare.mjs rc",
     "release:notes:preview": "node scripts/release-notes-preview.mjs",
@@ -35,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anini39/opencode-outpost.git"
+    "url": "git+https://github.com/tbosancheros39/opencode-outpost.git"
   },
   "keywords": [
     "opencode",
@@ -45,12 +49,18 @@
     "developer-tools",
     "cli"
   ],
-  "author": "anini39",
+  "author": {
+    "name": "anini39",
+    "email": "tunini@ik.me"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/anini39/opencode-outpost/issues"
+    "url": "https://github.com/tbosancheros39/opencode-outpost/issues"
   },
-  "homepage": "https://github.com/anini39/opencode-outpost#readme",
+  "homepage": "https://github.com/tbosancheros39/opencode-outpost#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@grammyjs/runner": "^2.0.3",
     "@opencode-ai/sdk": "^1.4.12",
