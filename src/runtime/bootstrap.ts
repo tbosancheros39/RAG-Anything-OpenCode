@@ -14,7 +14,7 @@ import {
   type Locale,
 } from "../i18n/index.js";
 
-const DEFAULT_API_URL = "http://localhost:4096";
+const DEFAULT_API_URL = "http://localhost:4097";
 const DEFAULT_SERVER_USERNAME = "opencode";
 const FALLBACK_MODEL_PROVIDER = "opencode";
 const FALLBACK_MODEL_ID = "big-pickle";

@@ -184,7 +184,7 @@ TASK_LIMIT=${defaults.bot.taskLimit}
 # See documentation for setup: https://docs.opencode-bot.dev
 
 # === ADVANCED ===
-# OPENCODE_API_URL=http://localhost:4096
+# OPENCODE_API_URL=http://localhost:4097
 # OPENCODE_SERVER_USERNAME=opencode
 # OPENCODE_SERVER_PASSWORD=
 # LOG_LEVEL=info
