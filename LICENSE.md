@@ -1,3 +1,7 @@
+This is a fork of https://github.com/grinev/opencode-telegram-bot
+
+---
+
 MIT License
 
 Copyright (c) 2026 Ruslan Grinev
@@ -18,12 +22,5 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-This is a fork of https://github.com/grinev/opencode-telegram-bot
-Significant modifications include: multi-user support, BullMQ task queue,
-Redis integration, security sandboxing, file explorer, Git operations,
-and expanded command set (34 vs 14 commands).
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
