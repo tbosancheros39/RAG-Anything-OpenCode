@@ -39,6 +39,7 @@
 - [Why Outpost?](#why-outpost)
 - [Quick Start](#quick-start)
 - [Features](#features)
+- [Skills](#skills)
 - [Commands](#commands)
 - [Configuration](#configuration)
 - [Deployment](docs/DEPLOYMENT.md)
@@ -61,6 +62,22 @@
 - 7 locales (en, de, es, fr, ru, zh, bs)
 - Proxy support (SOCKS5, HTTP/HTTPS)
 - MarkdownV2 rendering with remark-gfm
+
+## Skills
+
+OpenCode loads skills from `~/.config/opencode/skills/`. A curated set of ready-to-use skills is included in [`assets/skills.zip`](assets/skills.zip).
+
+> **Warning:** Loading all skills at once will consume significant context window space. Pick only the skills you need and copy them individually to your skills folder.
+
+### Installing Skills
+
+```bash
+# Extract specific skills you want
+unzip assets/skills.zip "skill-name/*" -d ~/.config/opencode/skills/
+
+# Or extract all (not recommended — uses lots of context)
+unzip assets/skills.zip -d ~/.config/opencode/skills/
+```
 
 ## Roadmap
 
