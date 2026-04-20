@@ -135,7 +135,8 @@ export function resolveInteractionGuardDecision(ctx: Context): GuardDecision {
 
   if (state && interactionManager.isExpired(chatId)) {
     interactionManager.clear(chatId, "expired");
-    return createBlockDecision(inputType, state, "expired", command, isBusy);
+    // Expired interactions should not block new input — allow through
+    return createAllowDecision(inputType, null, command, isBusy);
   }
 
   if (isBusy) {

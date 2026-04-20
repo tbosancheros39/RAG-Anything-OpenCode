@@ -140,8 +140,7 @@ describe("interaction guard", () => {
 
     const decision = resolveInteractionGuardDecision(createContext({ text: "hello" }));
 
-    expect(decision.allow).toBe(false);
-    expect(decision.reason).toBe("expired");
+    expect(decision.allow).toBe(true);
     expect(interactionManager.isActive(12345)).toBe(false);
   });
 

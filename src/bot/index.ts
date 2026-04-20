@@ -76,7 +76,7 @@ import { handleContextButtonPress, handleCompactConfirm } from "./handlers/conte
 import { handleInlineMenuCancel } from "./handlers/inline-menu.js";
 import { questionManager } from "../question/manager.js";
 import { interactionManager } from "../interaction/manager.js";
-import { clearAllInteractionState } from "../interaction/cleanup.js";
+import { clearAllInteractionState, clearPromptInteractionState } from "../interaction/cleanup.js";
 import { keyboardManager } from "../keyboard/manager.js";
 import { subscribeToEvents } from "../opencode/events.js";
 import { summaryAggregator } from "../summary/aggregator.js";
@@ -529,6 +529,7 @@ async function ensureEventSubscription(directory: string): Promise<void> {
           logger.error("Bot or chat ID not available for sending message");
           responseStreamer.clearMessage(sessionId, messageId, "bot_context_missing");
           toolCallStreamer.clearSession(sessionId, "bot_context_missing");
+          clearPromptInteractionState(chatIdInstance ?? 0, "prompt_completed_no_context");
           if (chatIdInstance) {
             clearDraftId(chatIdInstance);
           }
@@ -540,6 +541,7 @@ async function ensureEventSubscription(directory: string): Promise<void> {
         if (currentSession?.id !== sessionId) {
           responseStreamer.clearMessage(sessionId, messageId, "session_mismatch");
           toolCallStreamer.clearSession(sessionId, "session_mismatch");
+          clearPromptInteractionState(chatIdInstance ?? 0, "prompt_completed_session_mismatch");
           if (chatIdInstance) {
             clearDraftId(chatIdInstance);
           }
@@ -610,6 +612,7 @@ async function ensureEventSubscription(directory: string): Promise<void> {
       } finally {
         foregroundSessionState.markIdle(sessionId);
         clearAssistantRunState(sessionId);
+        clearPromptInteractionState(chatIdInstance ?? 0, "prompt_completed");
 
         if (chatIdInstance) {
           clearDraftId(chatIdInstance);
@@ -948,6 +951,7 @@ async function ensureEventSubscription(directory: string): Promise<void> {
 
     foregroundSessionState.markIdle(sessionId);
     clearAssistantRunState(sessionId);
+    clearPromptInteractionState(chatIdInstance ?? 0, "session_error");
     await scheduledTaskRuntime.flushDeferredDeliveries();
   });
 

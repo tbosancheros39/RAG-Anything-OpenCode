@@ -61,6 +61,7 @@ function syncQuestionInteractionState(
     kind: "question",
     expectedInput,
     metadata,
+    expiresInMs: 5 * 60 * 1000, // 5 minutes
   });
 }
 

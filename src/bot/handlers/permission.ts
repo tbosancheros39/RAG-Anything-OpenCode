@@ -87,6 +87,7 @@ function syncPermissionInteractionState(
     kind: "permission",
     expectedInput: "callback",
     metadata: nextMetadata,
+    expiresInMs: 10 * 60 * 1000, // 10 minutes
   });
 }
 
