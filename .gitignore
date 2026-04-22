@@ -1,0 +1,5 @@
+.env
+rag_storage/
+rag_output/
+.venv/
+__pycache__/
