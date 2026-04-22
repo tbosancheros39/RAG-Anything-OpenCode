@@ -112,6 +112,7 @@ File location: `~/.config/opencode/opencode.json` (Linux/macOS) or `%APPDATA%/op
       "type": "local",
       "command": ["python", "-m", "rag_anything_mcp"],
       "environment": {
+        "PATH": "/home/user/RAG-anything/.venv/bin:/usr/local/bin:/usr/bin:/bin",
         "OPENAI_API_KEY": "sk-your-key-here",
         "WORKING_DIR": "/home/user/rag_storage",
         "PARSER": "docling",

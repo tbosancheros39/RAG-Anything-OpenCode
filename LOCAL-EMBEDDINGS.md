@@ -130,6 +130,7 @@ Edit `~/.config/opencode/opencode.json`. Add `EMBEDDING_API_KEY` and `EMBEDDING_
       "type": "local",
       "command": ["python", "-m", "rag_anything_mcp"],
       "environment": {
+        "PATH": "/home/user/RAG-anything/.venv/bin:/usr/local/bin:/usr/bin:/bin",
         "OPENAI_API_KEY": "your-api-key",
         "OPENAI_BASE_URL": "https://opencode.ai/zen/go/v1",
         "EMBEDDING_API_KEY": "ollama",
@@ -150,6 +151,8 @@ Edit `~/.config/opencode/opencode.json`. Add `EMBEDDING_API_KEY` and `EMBEDDING_
   }
 }
 ```
+
+> **Critical**: The `PATH` variable must include your venv's `bin` directory. Without it, the `docling` parser cannot verify its installation and will fail with "Parser not properly installed".
 
 Key changes:
 - `EMBEDDING_API_KEY`: `"ollama"` — Ollama doesn't require a real key, but the OpenAI client needs something non-empty

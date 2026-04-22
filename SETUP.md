@@ -85,6 +85,8 @@ EMBEDDING_BASE_URL=https://api.openai.com/v1
 
 These default to `OPENAI_API_KEY` and `OPENAI_BASE_URL` when not set.
 
+For other embedding providers (Jina, Gemini, local Ollama), see [CLOUD-EMBEDDINGS.md](CLOUD-EMBEDDINGS.md) and [LOCAL-EMBEDDINGS.md](LOCAL-EMBEDDINGS.md).
+
 Add to `.gitignore`:
 
 ```
@@ -107,6 +109,7 @@ File location: `~/.config/opencode/opencode.json` (Linux/macOS) or `%APPDATA%/op
       "type": "local",
       "command": ["python", "-m", "rag_anything_mcp"],
       "environment": {
+        "PATH": "/home/user/RAG-anything/.venv/bin:/usr/local/bin:/usr/bin:/bin",
         "OPENAI_API_KEY": "sk-your-key-here",
         "WORKING_DIR": "/home/user/rag_storage",
         "PARSER": "docling",
@@ -124,6 +127,8 @@ File location: `~/.config/opencode/opencode.json` (Linux/macOS) or `%APPDATA%/op
   }
 }
 ```
+
+> **Critical**: The `PATH` variable must include the venv's `bin` directory. Without it, the `docling` parser cannot verify its installation and will fail with "Parser not properly installed". Adjust the path to match your actual venv location.
 
 > ⚠️ All values must be strings. `"4"` not `4`. OpenCode passes env vars as strings — numeric values without quotes will cause silent failures.
 
@@ -217,7 +222,7 @@ This calls `get_status` and returns config, storage info, and model assignments.
 
 | Error | Fix |
 |-------|-----|
-| `Parser not properly installed` | `pip install docling` |
+| `Parser not properly installed` | 1. `pip install docling` 2. Add `PATH` env var with venv `bin` directory to config |
 | `Failed to initialize LightRAG` | Check `OPENAI_API_KEY` is valid and `WORKING_DIR` is writable |
 | Timeout during ingestion | Increase `timeout` to `600000` in OpenCode config |
 | Empty query results | Verify ingestion completed without errors before querying |

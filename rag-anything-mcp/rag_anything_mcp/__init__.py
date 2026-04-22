@@ -144,8 +144,12 @@ async def _openai_llm_model_func_async(
     return response.choices[0].message.content or ""
 
 
-async def _openai_embedding_func(texts: List[str]) -> List[List[float]]:
-    """Asynchronous embedding wrapper using OpenAI API."""
+async def _openai_embedding_func(texts: List[str]) -> "numpy.ndarray":
+    """Asynchronous embedding wrapper using OpenAI API.
+    
+    Returns a numpy array (required by LightRAG's EmbeddingFunc validation).
+    """
+    import numpy as np
     import openai
 
     client = openai.AsyncOpenAI(
@@ -156,7 +160,29 @@ async def _openai_embedding_func(texts: List[str]) -> List[List[float]]:
         model=EMBEDDING_MODEL,
         input=texts,
     )
-    return [item.embedding for item in response.data]
+    return np.array([item.embedding for item in response.data])
+
+
+def _build_embedding_func():
+    """Wrap the embedding function in LightRAG's EmbeddingFunc dataclass."""
+    from lightrag.utils import EmbeddingFunc
+
+    # Determine embedding dimension based on model
+    dim_map = {
+        "mxbai-embed-large": 1024,
+        "nomic-embed-text": 768,
+        "text-embedding-3-small": 1536,
+        "text-embedding-3-large": 3072,
+        "bge-m3": 1024,
+        "all-minilm": 384,
+    }
+    dim = dim_map.get(EMBEDDING_MODEL, 1024)
+
+    return EmbeddingFunc(
+        embedding_dim=dim,
+        func=_openai_embedding_func,
+        model_name=EMBEDDING_MODEL,
+    )
 
 
 async def _openai_vision_model_func(
@@ -227,9 +253,6 @@ def _build_rag_anything() -> RAGAnything:
     lightrag_kwargs: Dict[str, Any] = {
         "llm_model_name": LLM_MODEL,
         "llm_model_max_async": int(os.environ.get("RAG_LLM_MAX_ASYNC", "16")),
-        "llm_model_max_token_size": int(
-            os.environ.get("RAG_LLM_MAX_TOKEN_SIZE", "32768")
-        ),
         "embedding_func_max_async": int(
             os.environ.get("RAG_EMBED_MAX_ASYNC", "16")
         ),
@@ -238,7 +261,7 @@ def _build_rag_anything() -> RAGAnything:
     rag = RAGAnything(
         config=config,
         llm_model_func=_openai_llm_model_func_async,
-        embedding_func=_openai_embedding_func,
+        embedding_func=_build_embedding_func(),
         vision_model_func=_openai_vision_model_func,
         lightrag_kwargs=lightrag_kwargs,
     )
@@ -258,7 +281,7 @@ async def _initialize_rag() -> None:
         return
 
     logger.info("Initializing LightRAG storage...")
-    result = await _rag.initialize_lightrag()
+    result = await _rag._ensure_lightrag_initialized()
     if not result.get("success", False):
         error = result.get("error", "Unknown error")
         raise RuntimeError(f"Failed to initialize LightRAG: {error}")

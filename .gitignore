@@ -3,3 +3,5 @@ rag_storage/
 rag_output/
 .venv/
 __pycache__/
+local-rag.py
+usage.md
