@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rag-anything-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for RAG-Anything document ingestion and multimodal retrieval"
 readme = "README.md"
 license = { text = "MIT" }
@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "mcp>=1.6.0",
+    "mcp>=1.25,<2",
     "raganything>=1.2.0",
     "openai>=1.0.0",
 ]

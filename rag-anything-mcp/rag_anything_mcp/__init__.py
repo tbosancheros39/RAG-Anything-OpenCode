@@ -80,6 +80,22 @@ except ImportError as exc:
     ) from exc
 
 # ---------------------------------------------------------------------------
+# Runtime patch: extend DoclingParser to support markdown / plain text
+# ---------------------------------------------------------------------------
+# Docling CLI natively parses .md and .txt, but RAG-Anything's wrapper
+# (as of v1.2.10) rejects them in DoclingParser.parse_document().
+# We patch HTML_FORMATS so .md/.txt route through parse_html(), which
+# invokes the docling CLI and works perfectly for these formats.
+# ---------------------------------------------------------------------------
+try:
+    from raganything.parser import DoclingParser
+
+    DoclingParser.HTML_FORMATS = DoclingParser.HTML_FORMATS | {".md", ".txt"}
+    logger.info("Patched DoclingParser.HTML_FORMATS to include .md and .txt")
+except Exception as exc:
+    logger.warning(f"Could not patch DoclingParser: {exc}")
+
+# ---------------------------------------------------------------------------
 # Configuration from environment
 # ---------------------------------------------------------------------------
 

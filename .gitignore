@@ -5,3 +5,8 @@ rag_output/
 __pycache__/
 local-rag.py
 usage.md
+
+# Temporary / cache files
+kv_store_llm_response_cache.json
+requirements-lock.txt
+*-sdk-analysis.md

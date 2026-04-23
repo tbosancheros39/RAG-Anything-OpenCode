@@ -13,7 +13,7 @@ OpenCode: [searches your indexed documents]
          REST endpoints with WebSocket for real-time updates..."
 ```
 
-- **Ingest**: PDF, DOCX, PPTX, images (PNG, JPEG, WebP, GIF)
+- **Ingest**: PDF, DOCX, PPTX, Markdown, plain text, images (PNG, JPEG, WebP, GIF)
 - **Query**: Natural language across your entire knowledge base
 - **Multimodal**: Query with inline images, tables, equations
 - **Modes**: mix, hybrid, local, global, naive
