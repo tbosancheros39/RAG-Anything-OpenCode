@@ -1,10 +1,10 @@
 # RAG-Anything for OpenCode
 
-A production-ready MCP server that gives OpenCode a document knowledge base with natural language querying. Index PDFs, DOCX, PPTX, images. Query across all of it with simple questions.
+I built this because I was tired of copy-pasting chunks of PDFs into chat windows. It's an MCP server that lets OpenCode actually remember your documents — index them once, query them forever.
 
 **Stack**: Python 3.10+ | Docling | LightRAG | OpenAI-compatible APIs
 
-## What It Does
+## What it actually does
 
 ```
 You: "What did we discuss about the API design?"
@@ -19,7 +19,7 @@ OpenCode: [searches your indexed documents]
 - **Modes**: mix, hybrid, local, global, naive
 - **Storage**: Local filesystem (SQLite + JSON + embeddings)
 
-## Architecture
+## How it works
 
 ```mermaid
 graph LR
@@ -29,9 +29,9 @@ graph LR
     C -->|Context| E[LLM Response]
 ```
 
-**Data flow**: Documents → Docling parsing → LightRAG graph + embeddings → queried via MCP → context-fed LLM responses.
+Documents go through Docling for parsing, then LightRAG builds a graph + embeddings. OpenCode queries via MCP and gets context-fed responses.
 
-## System Requirements
+## What you need
 
 | Resource | Minimum | Recommended |
 |----------|---------|-------------|
@@ -40,9 +40,9 @@ graph LR
 | **Python** | 3.10 | 3.11-3.12 |
 | **Network** | — | Stable connection for API calls |
 
-**First run**: Docling downloads models (~1.5GB) on cold start. Large PDFs with images need more RAM.
+**Heads up**: Docling downloads ~1.5GB of models on first run. Don't panic if it sits there for a minute.
 
-## Quick Start
+## Getting started
 
 ### 1. Install
 
@@ -54,20 +54,20 @@ pip install rag-anything-mcp
 pip install docling
 ```
 
-**Verify install:**
+**Verify it actually works:**
 ```bash
 python -m rag_anything_mcp --help
 ```
-If this errors, stop and fix before continuing.
+If this errors, stop. Fix it now. Don't hope it'll sort itself out later.
 
-### 2. Create Storage Directories
+### 2. Create storage directories
 
 ```bash
 mkdir -p ~/rag_storage
 mkdir -p ~/rag_output
 ```
 
-> Treat `~/rag_storage` like a database — back it up, don't delete it between runs.
+> `~/rag_storage` is your database. Back it up. Don't delete it between runs unless you enjoy re-indexing everything.
 
 ### 3. Configure OpenCode
 
@@ -100,13 +100,13 @@ Add to `~/.config/opencode/opencode.json`:
 }
 ```
 
-> **Note**: Update `PATH` to point to your actual virtual environment (e.g., `/home/yourname/projects/rag-anything/.venv/bin` or wherever you created the venv).
+> Update `PATH` to your actual venv location. This matters — if it's wrong, docling won't be found and everything breaks silently.
 
-### Split LLM + Embeddings (Recommended with OpenCode Go)
+### Split LLM + embeddings (recommended with OpenCode Go)
 
-> ⚠️ **SECURITY WARNING**: Replace with your actual API keys — never commit this file to version control. These keys grant access to paid APIs.
+> ⚠️ **Don't commit this file.** It has your API keys in plaintext.
 
-OpenCode's Go API provides LLM and vision but not embeddings. Use separate credentials:
+OpenCode's Go API handles LLM and vision but not embeddings. Route embeddings separately:
 
 ```json
 {
@@ -123,74 +123,72 @@ OpenCode's Go API provides LLM and vision but not embeddings. Use separate crede
 }
 ```
 
-> **Note**: Update `PATH` to your actual venv location (e.g., `/home/yourname/.venv/bin`).
+`EMBEDDING_API_KEY` and `EMBEDDING_BASE_URL` fall back to `OPENAI_API_KEY` and `OPENAI_BASE_URL` if you don't set them.
 
-`EMBEDDING_API_KEY` and `EMBEDDING_BASE_URL` default to `OPENAI_API_KEY` and `OPENAI_BASE_URL` when not set.
+For free local embeddings with Ollama, see [LOCAL-EMBEDDINGS.md](LOCAL-EMBEDDINGS.md).
 
-For running embeddings locally with Ollama (free), see [LOCAL-EMBEDDINGS.md](LOCAL-EMBEDDINGS.md).
+For cloud providers (Jina, Gemini, OpenAI), see [CLOUD-EMBEDDINGS.md](CLOUD-EMBEDDINGS.md).
 
-For cloud embedding providers (Jina, Gemini, OpenAI), see [CLOUD-EMBEDDINGS.md](CLOUD-EMBEDDINGS.md).
+## Query modes
 
-## Query Modes Explained
-
-| Mode | Use When | Description |
+| Mode | Use when | Description |
 |------|----------|-------------|
-| `mix` | Default choice | Auto-balances local entity search + global semantic search |
-| `hybrid` | Precision needed | Local graph + vector search with re-ranking |
+| `mix` | Default | Balances entity search + semantic search |
+| `hybrid` | Precision matters | Graph + vector with re-ranking |
 | `local` | Specific facts | Entity/relation search only — fast, targeted |
-| `global` | Broad summaries | Full knowledge graph traversal — slower, comprehensive |
+| `global` | Broad summaries | Full graph traversal — slower, comprehensive |
 | `naive` | Debugging | Simple chunk lookup, no graph reasoning |
 
-**Recommendation**: Start with `mix` for most queries. Use `hybrid` when precision matters. Use `local` for "who did what" questions. Use `global` for "summarize everything about X".
+Start with `mix`. Switch to `hybrid` when results feel fuzzy. Use `local` for "who did what" questions. Use `global` when you want "everything about X."
 
-## Environment Variables
+## Environment variables
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `OPENAI_API_KEY` | Yes | — | LLM + Vision + Embeddings (if no separate embedding key) |
+| `OPENAI_API_KEY` | Yes | — | LLM + Vision + Embeddings (if no separate key) |
 | `OPENAI_BASE_URL` | No | OpenAI default | Custom endpoint for LLM/vision |
 | `EMBEDDING_API_KEY` | No | `OPENAI_API_KEY` | Separate API key for embeddings |
 | `EMBEDDING_BASE_URL` | No | `OPENAI_BASE_URL` | Separate endpoint for embeddings |
-| `WORKING_DIR` | Yes | — | Persistent storage path (SQLite + JSON + embeddings) |
-| `LLM_MODEL` | No | `kimi-k2.6` | Chat model for query generation |
+| `WORKING_DIR` | Yes | — | Storage path (SQLite + JSON + embeddings) |
+| `LLM_MODEL` | No | `kimi-k2.6` | Chat model for queries |
 | `EMBEDDING_MODEL` | No | `text-embedding-3-small` | Embedding model |
 | `VISION_MODEL` | No | `kimi-k2.6` | Vision model for multimodal queries |
 | `PARSER` | No | `docling` | Document parser (docling, mineru) |
 | `PARSE_METHOD` | No | `auto` | Parse strategy |
 | `RAG_LLM_MAX_ASYNC` | No | `4` | Concurrent LLM calls (max 8 recommended) |
 | `RAG_EMBED_MAX_ASYNC` | No | `8` | Concurrent embedding calls |
-| `LOG_LEVEL` | No | `WARNING` | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `LOG_LEVEL` | No | `WARNING` | Logging level |
 
-## Troubleshooting
+## When things break
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | `Parser not properly installed` | Docling missing | `pip install docling` |
-| `Failed to initialize LightRAG` | Invalid API key or permissions | Check `OPENAI_API_KEY` is valid |
-| Timeout during ingestion | Large file + slow API | Increase `timeout` to `600000` in config |
-| Empty query results | Incomplete ingestion | Verify document ingested without errors |
-| Knowledge graph corruption | Killed mid-ingestion | Delete `rag_storage/` contents, re-ingest |
-| Docling model download fails | Network/HF access | Set `DOCLING_CACHE_DIR` or check HuggingFace |
-| OpenCode can't connect | Wrong config path | Confirm `timeout` is high enough (300s+) |
-| High RAM usage | Large batch job | Lower `RAG_LLM_MAX_ASYNC`, process fewer docs at once |
+| `Failed to initialize LightRAG` | Bad API key | Check `OPENAI_API_KEY` |
+| Timeout during ingestion | Large file + slow API | Bump `timeout` to `600000` |
+| Empty query results | Incomplete ingestion | Check ingestion finished without errors |
+| Knowledge graph corruption | Killed mid-ingestion | Nuke `rag_storage/`, re-ingest |
+| Docling model download fails | Network/HF issue | Set `DOCLING_CACHE_DIR` or check HuggingFace |
+| OpenCode can't connect | Wrong config | Make sure `timeout` is 300s+ |
+| High RAM usage | Big batch job | Lower `RAG_LLM_MAX_ASYNC`, process fewer docs |
 
-## Migration & Backup
+## Backup and migration
 
-**To backup your knowledge base:**
+**Back up your knowledge base:**
 ```bash
 cp -r ~/rag_storage ~/rag_storage_backup_$(date +%Y%m%d)
 ```
 
-**To migrate to a new machine:**
-1. Copy `~/rag_storage/` to new machine
+**Move to a new machine:**
+1. Copy `~/rag_storage/` over
 2. Install same Python version + dependencies
-3. Update `WORKING_DIR` in `opencode.json` to new path
+3. Update `WORKING_DIR` in `opencode.json`
 
-All state is self-contained in `WORKING_DIR` — no external database needed.
+All state lives in `WORKING_DIR`. No external database to worry about.
 
 ## Security
 
-**Never commit `opencode.json` or `.env` to version control.** These files contain API keys. Add to `.gitignore`:
+**Never commit `opencode.json` or `.env` to git.** These contain API keys. Add to `.gitignore`:
 
 ```
 .env
@@ -202,9 +200,7 @@ __pycache__/
 .venv/
 ```
 
-## Development Setup
-
-For contributing or local development:
+## Development
 
 ```bash
 git clone https://github.com/tbosancheros39/RAG-Anything-OpenCode.git
@@ -227,12 +223,12 @@ ruff check .
 ruff format .
 ```
 
-## Requirements Met
+## Checklist
 
 - [ ] Python 3.10+ installed
-- [ ] `pip install rag-anything-mcp docling` succeeds
+- [ ] `pip install rag-anything-mcp docling` works
 - [ ] Storage directories created
-- [ ] OpenCode config updated with MCP entry
-- [ ] Server starts without errors (`python -m rag_anything_mcp`)
+- [ ] OpenCode config has MCP entry
+- [ ] Server starts (`python -m rag_anything_mcp`)
 - [ ] At least one document indexed
-- [ ] Query returns relevant results
+- [ ] Query returns something relevant
